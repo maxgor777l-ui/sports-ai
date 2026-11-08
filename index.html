@@ -1,0 +1,176 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b1220">
+  <title>Sports AI</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 24px 18px;
+      background: #0b1220;
+      color: #f4f7fb;
+      font-family: Arial, sans-serif;
+    }
+
+    .container { max-width: 480px; margin: auto; }
+
+    header { text-align: center; margin: 16px 0 30px; }
+
+    .logo {
+      color: #18e6a0;
+      font-size: 29px;
+      font-weight: 900;
+      letter-spacing: 2px;
+    }
+
+    .subtitle { color: #91a1b8; margin-top: 8px; font-size: 13px; }
+
+    .card {
+      background: #172338;
+      border: 1px solid #263750;
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 17px;
+    }
+
+    h2 { font-size: 17px; margin: 0 0 17px; }
+
+    .upload {
+      border: 1px dashed #18b98a;
+      background: #102b2c;
+      border-radius: 14px;
+      padding: 27px 12px;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .upload-icon { font-size: 34px; margin-bottom: 10px; }
+
+    .upload p { color: #a8b9ca; font-size: 13px; margin: 6px 0; }
+
+    input[type=file] { display: none; }
+
+    button {
+      width: 100%;
+      border: 0;
+      border-radius: 12px;
+      padding: 15px;
+      background: #18e6a0;
+      color: #062019;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 14px;
+    }
+
+    button:disabled { opacity: .5; }
+
+    .section-title {
+      color: #18e6a0;
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+
+    .feature {
+      display: flex;
+      gap: 11px;
+      padding: 10px 0;
+      color: #c2cede;
+      font-size: 14px;
+      border-bottom: 1px solid #263750;
+    }
+
+    .feature:last-child { border: 0; }
+
+    .result {
+      display: none;
+      white-space: pre-wrap;
+      line-height: 1.6;
+      color: #dce6f2;
+      font-size: 14px;
+    }
+
+    footer {
+      text-align: center;
+      color: #64758e;
+      font-size: 11px;
+      padding: 15px;
+    }
+
+    #fileName { color: #18e6a0; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <header>
+      <div class="logo">🏆 SPORTS AI</div>
+      <div class="subtitle">Умный анализ спортивных событий</div>
+    </header>
+
+    <section class="card">
+      <h2>📸 Загрузка события</h2>
+
+      <label class="upload" for="photo">
+        <div class="upload-icon">☁️</div>
+        <strong>Выбери скриншот матча</strong>
+        <p>Нажми здесь, чтобы загрузить изображение</p>
+        <div id="fileName"></div>
+      </label>
+
+      <input id="photo" type="file" accept="image/*">
+
+      <button id="analyze">⌕ Проанализировать событие</button>
+    </section>
+
+    <section class="card">
+      <div class="section-title">🎯 ВОЗМОЖНОСТИ SPORTS AI</div>
+      <div class="feature">🏒 Распознавание спортивных событий</div>
+      <div class="feature">📊 Анализ статистики команд</div>
+      <div class="feature">🧠 Интеллектуальный анализ матча</div>
+      <div class="feature">🎯 Прогнозы и оценка рисков</div>
+      <div class="feature">📁 История анализов</div>
+    </section>
+
+    <section class="card">
+      <div class="section-title">📈 РЕЗУЛЬТАТ АНАЛИЗА</div>
+      <div id="result" class="result">
+        Здесь появится результат анализа.
+      </div>
+      <p id="placeholder" style="color:#91a1b8;font-size:13px">
+        Загрузи скриншот, чтобы начать анализ.
+      </p>
+    </section>
+
+    <footer>SPORTS AI · Анализируй разумно</footer>
+  </main>
+
+  <script>
+    const tg = window.Telegram?.WebApp;
+    tg?.ready();
+    tg?.expand();
+
+    const photo = document.getElementById("photo");
+    const fileName = document.getElementById("fileName");
+
+    photo.addEventListener("change", () => {
+      fileName.textContent = photo.files[0]?.name || "";
+    });
+
+    document.getElementById("analyze").addEventListener("click", () => {
+      if (!photo.files.length) {
+        alert("Сначала выбери скриншот матча.");
+        return;
+      }
+
+      alert("Интерфейс готов! Подключение анализа добавим следующим этапом.");
+    });
+  </script>
+</body>
+</html>
