@@ -1,110 +1,58 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0b1220">
   <title>Sports AI</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     * { box-sizing: border-box; }
-
+    html, body { width: 100%; min-height: 100%; margin: 0; }
     body {
-      margin: 0;
-      padding: 24px 18px;
+      padding: max(18px, env(safe-area-inset-top)) 14px max(24px, env(safe-area-inset-bottom));
+      overflow-x: hidden;
       background: #0b1220;
       color: #f4f7fb;
       font-family: Arial, sans-serif;
     }
-
-    .container { max-width: 480px; margin: auto; }
-
-    header { text-align: center; margin: 16px 0 30px; }
-
-    .logo {
-      color: #18e6a0;
-      font-size: 29px;
-      font-weight: 900;
-      letter-spacing: 2px;
-    }
-
-    .subtitle { color: #91a1b8; margin-top: 8px; font-size: 13px; }
-
+    button, label { -webkit-tap-highlight-color: transparent; }
+    .container { width: 100%; max-width: 480px; margin: 0 auto; }
+    header { text-align: center; margin: 12px 0 25px; }
+    .logo { color: #18e6a0; font-size: 28px; font-weight: 900; letter-spacing: 1.5px; }
+    .subtitle { color: #91a1b8; margin-top: 7px; font-size: 13px; }
     .card {
-      background: #172338;
-      border: 1px solid #263750;
-      border-radius: 18px;
-      padding: 20px;
-      margin-bottom: 17px;
+      width: 100%; min-width: 0;
+      background: #172338; border: 1px solid #263750;
+      border-radius: 18px; padding: 18px; margin-bottom: 15px;
     }
-
-    h2 { font-size: 17px; margin: 0 0 17px; }
-
-    .upload {
-      border: 1px dashed #18b98a;
-      background: #102b2c;
-      border-radius: 14px;
-      padding: 27px 12px;
-      text-align: center;
-      cursor: pointer;
+    h2 { font-size: 17px; margin: 0 0 15px; }
+    .hint { color: #a8b9ca; font-size: 13px; line-height: 1.5; margin: 0 0 14px; }
+    .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .pick-button, .analyze-button {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; min-width: 0; min-height: 48px; padding: 12px 10px;
+      border: 0; border-radius: 12px; font-size: 14px; font-weight: 700;
+      cursor: pointer; text-align: center; overflow-wrap: anywhere;
     }
-
-    .upload-icon { font-size: 34px; margin-bottom: 10px; }
-
-    .upload p { color: #a8b9ca; font-size: 13px; margin: 6px 0; }
-
-    input[type=file] { display: none; }
-
-    button {
-      width: 100%;
-      border: 0;
-      border-radius: 12px;
-      padding: 15px;
-      background: #18e6a0;
-      color: #062019;
-      font-size: 15px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 14px;
+    .pick-button { background: #22354d; color: #eaf2fb; border: 1px solid #35516d; }
+    .analyze-button { margin-top: 13px; background: #18e6a0; color: #062019; }
+    .analyze-button:disabled { opacity: .45; cursor: not-allowed; }
+    input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+    .preview-wrap { display: none; margin-top: 14px; }
+    .preview-wrap img { display: block; width: 100%; max-height: 280px; object-fit: contain; border-radius: 12px; background: #0b1220; }
+    .file-name { color: #a8b9ca; font-size: 12px; margin-top: 8px; overflow-wrap: anywhere; }
+    .section-title { color: #18e6a0; font-size: 13px; font-weight: 800; margin-bottom: 10px; }
+    .feature { padding: 10px 0; color: #c2cede; font-size: 14px; border-bottom: 1px solid #263750; }
+    .feature:last-child { border: 0; padding-bottom: 0; }
+    .result { white-space: pre-wrap; line-height: 1.6; color: #dce6f2; font-size: 14px; }
+    footer { text-align: center; color: #64758e; font-size: 11px; padding: 8px 10px; }
+    @media (max-width: 360px) {
+      body { padding-left: 10px; padding-right: 10px; }
+      .card { padding: 15px; }
+      .actions { grid-template-columns: 1fr; }
+      .logo { font-size: 25px; }
     }
-
-    button:disabled { opacity: .5; }
-
-    .section-title {
-      color: #18e6a0;
-      font-size: 14px;
-      font-weight: bold;
-      margin-bottom: 12px;
-    }
-
-    .feature {
-      display: flex;
-      gap: 11px;
-      padding: 10px 0;
-      color: #c2cede;
-      font-size: 14px;
-      border-bottom: 1px solid #263750;
-    }
-
-    .feature:last-child { border: 0; }
-
-    .result {
-      display: none;
-      white-space: pre-wrap;
-      line-height: 1.6;
-      color: #dce6f2;
-      font-size: 14px;
-    }
-
-    footer {
-      text-align: center;
-      color: #64758e;
-      font-size: 11px;
-      padding: 15px;
-    }
-
-    #fileName { color: #18e6a0; font-size: 12px; }
   </style>
 </head>
 <body>
@@ -116,17 +64,22 @@
 
     <section class="card">
       <h2>📸 Загрузка события</h2>
+      <p class="hint">Выбери скриншот матча или сделай новое фото.</p>
 
-      <label class="upload" for="photo">
-        <div class="upload-icon">☁️</div>
-        <strong>Выбери скриншот матча</strong>
-        <p>Нажми здесь, чтобы загрузить изображение</p>
-        <div id="fileName"></div>
-      </label>
+      <div class="actions">
+        <label class="pick-button" for="galleryPhoto">🖼️ Выбрать фото</label>
+        <label class="pick-button" for="cameraPhoto">📷 Сделать фото</label>
+      </div>
 
-      <input id="photo" type="file" accept="image/*">
+      <input id="galleryPhoto" type="file" accept="image/*">
+      <input id="cameraPhoto" type="file" accept="image/*" capture="environment">
 
-      <button id="analyze">⌕ Проанализировать событие</button>
+      <div class="preview-wrap" id="previewWrap">
+        <img id="preview" alt="Предпросмотр выбранного изображения">
+        <div class="file-name" id="fileName"></div>
+      </div>
+
+      <button class="analyze-button" id="analyze" disabled>⌕ Проанализировать событие</button>
     </section>
 
     <section class="card">
@@ -140,36 +93,48 @@
 
     <section class="card">
       <div class="section-title">📈 РЕЗУЛЬТАТ АНАЛИЗА</div>
-      <div id="result" class="result">
-        Здесь появится результат анализа.
-      </div>
-      <p id="placeholder" style="color:#91a1b8;font-size:13px">
-        Загрузи скриншот, чтобы начать анализ.
-      </p>
+      <div class="result" id="result">Загрузи изображение, чтобы подготовить его к анализу.</div>
     </section>
 
     <footer>SPORTS AI · Анализируй разумно</footer>
   </main>
 
   <script>
-    const tg = window.Telegram?.WebApp;
-    tg?.ready();
-    tg?.expand();
+    const tg = window.Telegram && window.Telegram.WebApp;
+    if (tg) { tg.ready(); tg.expand(); }
 
-    const photo = document.getElementById("photo");
+    const galleryPhoto = document.getElementById("galleryPhoto");
+    const cameraPhoto = document.getElementById("cameraPhoto");
+    const analyze = document.getElementById("analyze");
+    const previewWrap = document.getElementById("previewWrap");
+    const preview = document.getElementById("preview");
     const fileName = document.getElementById("fileName");
+    const result = document.getElementById("result");
+    let selectedFile = null;
+    let previewUrl = null;
 
-    photo.addEventListener("change", () => {
-      fileName.textContent = photo.files[0]?.name || "";
-    });
-
-    document.getElementById("analyze").addEventListener("click", () => {
-      if (!photo.files.length) {
-        alert("Сначала выбери скриншот матча.");
+    function showSelectedFile(file) {
+      if (!file) return;
+      if (!file.type.startsWith("image/")) {
+        result.textContent = "Пожалуйста, выбери изображение.";
         return;
       }
+      selectedFile = file;
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      previewUrl = URL.createObjectURL(file);
+      preview.src = previewUrl;
+      fileName.textContent = file.name || "Фото выбрано";
+      previewWrap.style.display = "block";
+      analyze.disabled = false;
+      result.textContent = "Фото выбрано. Можно запускать анализ после подключения серверной части.";
+    }
 
-      alert("Интерфейс готов! Подключение анализа добавим следующим этапом.");
+    galleryPhoto.addEventListener("change", () => showSelectedFile(galleryPhoto.files[0]));
+    cameraPhoto.addEventListener("change", () => showSelectedFile(cameraPhoto.files[0]));
+
+    analyze.addEventListener("click", () => {
+      if (!selectedFile) return;
+      result.textContent = "Изображение выбрано и готово к отправке. Подключение анализа через Gemini к Mini App — следующий этап.";
     });
   </script>
 </body>
